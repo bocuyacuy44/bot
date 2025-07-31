@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.18",
+    "axios": "^1.8.1",
+    "dotenv": "^17.2.1",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "formidable": "^3.5.2",
+    "md5": "^2.3.0",
+    "mysql2": "^3.12.0",
+    "qrcode-terminal": "^0.12.0",
+    "rimraf": "^6.0.1",
+    "ws": "^8.18.1"
+  }
+}

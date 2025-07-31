@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Templates - Toko Lena Kerudung</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <h2>Lena Kerudung</h2>
+        </div>
+        <div class="sidebar-menu">
+          <a href="/" class="sidebar-item">
+            <i class="bi bi-speedometer2"></i>
+            <span>Dashboard</span>
+          </a>
+          <a href="/templates" class="sidebar-item active">
+            <i class="bi bi-chat-text"></i>
+            <span>Template</span>
+          </a>
+          <a href="/logout" class="sidebar-item logout">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Logout</span>
+          </a>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <header class="top-header">
+          <div>Kelola pesan anda disini</div>
+          <div class="header-right">
+            <div class="profile dropdown">
+              <div class="profile-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                <span>Admin</span>
+                <i class="bi bi-chevron-down"></i>
+              </div>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+              </ul>
+            </div>
+          </div>
+        </header>
+
+        <div class="content-container" style="margin-top: -2em;">
+          <section class="content-section">
+            <div class="section-header">
+              <h2>Template Pesan</h2>
+              <p>Kelola template pesan otomatis untuk WhatsApp Bot</p>
+            </div>
+            
+            <!-- Admin Settings Section -->
+            <div class="card mb-4">
+              <div class="card-header">
+                <h5 class="mb-0">Pengaturan Admin</h5>
+              </div>
+              <div class="card-body">
+                <form id="admin-settings-form">
+                  <div id="admin-numbers-container">
+                    <!-- Nomor admin akan ditambahkan secara dinamis -->
+                    <div class="admin-number-row mb-3 d-flex align-items-end gap-2">
+                      <div class="flex-grow-1">
+                        <label class="form-label">Nomor WhatsApp Admin</label>
+                        <input type="text" class="form-control admin-number-input" name="whatsapp_number" placeholder="Contoh: 6281234567890" required>
+                        <div class="invalid-feedback"></div>
+                      </div>
+                      <button type="button" class="btn btn-danger remove-admin-btn" style="display: none;">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <button type="button" id="add-admin-btn" class="btn btn-outline-primary mb-3">
+                    <i class="bi bi-plus-circle me-2"></i>Tambah Admin
+                  </button>
+                  <div class="form-text mb-3">
+                    <i class="bi bi-info-circle me-1 text-primary"></i>
+                    Masukkan hingga 3 nomor WhatsApp admin (diawali 62, 10-15 digit) untuk menerima notifikasi pesanan baru. Minimal 1 nomor wajib diisi.
+                  </div>
+                  <div class="d-flex align-items-center">
+                    <button type="submit" class="btn btn-primary save-btn">
+                      <i class="bi bi-save me-2"></i>Simpan
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+            
+            <div class="templates-container" id="templates-container">
+              <div class="loading-templates text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-3 text-muted">Memuat Template...</p>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <!-- Template Item Markup (for reference) -->
+    <template id="template-card">
+      <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="template-name mb-0"></h5>
+          <span class="badge bg-primary-soft text-primary template-type">Default</span>
+        </div>
+        <div class="card-body">
+          <form class="template-form">
+            <div class="mb-3">
+              <label class="form-label">Pesan Template</label>
+              <textarea name="message" class="form-control" rows="6" required></textarea>
+              <div class="form-text mt-2">
+                <div class="template-variables">
+                  <span class="badge bg-light-grey text-dark me-2 mb-2">{{greeting}}</span>
+                  <span class="badge bg-light-grey text-dark me-2 mb-2">{{name}}</span>
+                </div>
+                <small class="d-block mt-2">
+                  <i class="bi bi-info-circle me-1 text-primary"></i>
+                  Gunakan <code>{{greeting}}</code> untuk salam otomatis dan <code>{{name}}</code> untuk nama pelanggan
+                </small>
+              </div>
+            </div>
+            <div class="d-flex align-items-center">
+              <button type="submit" class="btn btn-primary save-btn">
+                <i class="bi bi-save me-2"></i>Simpan
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </template>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Fungsi untuk menampilkan toast notification
+      function showToast(message, type = "success") {
+        let toastContainer = document.getElementById("toast-container");
+        if (!toastContainer) {
+          toastContainer = document.createElement("div");
+          toastContainer.id = "toast-container";
+          toastContainer.className = "position-fixed bottom-0 end-0 p-3";
+          toastContainer.style.zIndex = "9999";
+          document.body.appendChild(toastContainer);
+        }
+        
+        let bgColor = "bg-success";
+        let icon = "bi-check-circle-fill";
+        if (type === "danger") {
+          bgColor = "bg-danger";
+          icon = "bi-x-circle-fill";
+        } else if (type === "warning") {
+          bgColor = "bg-warning";
+          icon = "bi-megaphone-fill";
+        } else if (type === "info") {
+          bgColor = "bg-info";
+          icon = "bi-info-circle-fill";
+        }
+        
+        const toastId = `toast-${Date.now()}`;
+        const toastHtml = `
+          <div id="${toastId}" class="toast align-items-center text-white ${bgColor} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+              <div class="toast-body">
+                <i class="bi ${icon} me-2"></i> ${message}
+              </div>
+              <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+          </div>
+        `;
+        
+        toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+        const toastElement = document.getElementById(toastId);
+        const toast = new bootstrap.Toast(toastElement, { 
+          autohide: true,
+          delay: 3000
+        });
+        toast.show();
+        toastElement.addEventListener('hidden.bs.toast', () => {
+          toastElement.remove();
+        });
+      }
+
+      // Load templates
+      function loadTemplates() {
+        const container = document.getElementById("templates-container");
+        const templateCard = document.getElementById("template-card");
+        
+        fetch("/api/templates")
+          .then((res) => {
+            if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+            return res.json();
+          })
+          .then((templates) => {
+            container.innerHTML = "";
+            templates.forEach((template) => {
+              const card = document.importNode(templateCard.content, true).firstElementChild;
+              card.querySelector(".template-name").textContent = formatTemplateName(template.name);
+              card.querySelector(".template-type").textContent = getTemplateType(template.name);
+              card.querySelector("textarea").value = template.message;
+              const form = card.querySelector("form");
+              form.setAttribute("data-name", template.name);
+              form.addEventListener("submit", saveTemplate);
+              container.appendChild(card);
+            });
+          })
+          .catch((err) => {
+            container.innerHTML = `
+              <div class="alert alert-danger">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                Error: ${err.message}
+              </div>
+            `;
+            showToast(`Gagal memuat template: ${err.message}`, "danger");
+          });
+      }
+      
+      function formatTemplateName(name) {
+        return name.split('_')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ');
+      }
+      
+      function getTemplateType(name) {
+        if (name.includes('welcome')) return 'Welcome';
+        if (name.includes('default')) return 'Default';
+        if (name.includes('order')) return 'Order';
+        return 'Message';
+      }
+      
+      function saveTemplate(e) {
+        e.preventDefault();
+        const form = e.target;
+        const saveBtn = form.querySelector('.save-btn');
+        const name = form.getAttribute("data-name");
+        
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Menyimpan...';
+        
+        fetch(`/api/templates/${name}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: form.message.value,
+          }),
+        })
+          .then((res) => {
+            if (!res.ok) {
+              return res.json().then(data => {
+                throw new Error(data.error || `HTTP error ${res.status}`);
+              });
+            }
+            return res.json();
+          })
+          .then((data) => {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '<i class="bi bi-save me-2"></i>Simpan';
+            if (data.success) {
+              showToast("Template berhasil disimpan!", "success");
+            }
+          })
+          .catch((err) => {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '<i class="bi bi-save me-2"></i>Simpan';
+            showToast(`Error: ${err.message}`, "danger");
+          });
+      }
+
+      // Load admin settings
+      function loadAdminSettings() {
+        fetch("/api/admin-number")
+          .then((res) => {
+            if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+            return res.json();
+          })
+          .then((data) => {
+            console.log('API response:', data);
+            const container = document.getElementById("admin-numbers-container");
+            container.innerHTML = '';
+            
+            const admins = Array.isArray(data.admins) ? data.admins : [];
+            if (admins.length > 0) {
+              admins.forEach((admin, index) => {
+                addAdminNumberRow(admin.name, admin.whatsapp_number, index > 0);
+              });
+            } else {
+              addAdminNumberRow();
+            }
+            
+            updateAddButtonState();
+          })
+          .catch((err) => {
+            console.error("Error loading admin settings:", err);
+            const container = document.getElementById("admin-numbers-container");
+            container.innerHTML = `
+              <div class="alert alert-danger">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                Gagal memuat pengaturan admin: ${err.message}
+              </div>
+            `;
+            showToast(`Gagal memuat pengaturan admin: ${err.message}`, "danger");
+          });
+      }
+
+      // Tambah row nomor admin
+      function addAdminNumberRow(name = 'Admin', whatsapp_number = '', removable = true) {
+        const container = document.getElementById("admin-numbers-container");
+        const row = document.createElement('div');
+        row.className = 'admin-number-row mb-3 d-flex align-items-end gap-2';
+        row.innerHTML = `
+          <div class="flex-grow-1">
+            <label class="form-label">Nomor WhatsApp Admin</label>
+            <input type="text" class="form-control admin-number-input" name="whatsapp_number" placeholder="Contoh: 6281234567890" value="${whatsapp_number}" ${container.children.length === 0 ? 'required' : ''}>
+            <div class="invalid-feedback">Nomor harus diawali 62 dan panjang 10-15 digit</div>
+          </div>
+          <button type="button" class="btn btn-danger remove-admin-btn" style="${removable ? '' : 'display: none;'}">
+            <i class="bi bi-trash"></i>
+          </button>
+        `;
+        container.appendChild(row);
+        
+        const removeBtn = row.querySelector('.remove-admin-btn');
+        if (removeBtn) {
+          removeBtn.addEventListener('click', () => {
+            row.remove();
+            updateAddButtonState();
+          });
+        }
+
+        // Validasi input secara real-time
+        const input = row.querySelector('.admin-number-input');
+        input.addEventListener('input', () => {
+          const value = input.value.trim();
+          if (value && !/^62\d{8,13}$/.test(value)) {
+            input.classList.add('is-invalid');
+          } else {
+            input.classList.remove('is-invalid');
+          }
+        });
+      }
+
+      // Update status tombol Tambah Admin
+      function updateAddButtonState() {
+        const addBtn = document.getElementById('add-admin-btn');
+        const rows = document.querySelectorAll('.admin-number-row');
+        addBtn.disabled = rows.length >= 3;
+      }
+
+      // Event listener untuk tombol Tambah Admin
+      document.getElementById('add-admin-btn').addEventListener('click', () => {
+        addAdminNumberRow();
+        updateAddButtonState();
+      });
+
+      // Save admin settings
+      document.getElementById("admin-settings-form").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const form = e.target;
+        const saveBtn = form.querySelector('.save-btn');
+        
+        const inputs = document.querySelectorAll('.admin-number-input');
+        const admins = Array.from(inputs)
+          .map((input, index) => ({
+            name: `Admin ${index + 1}`,
+            whatsapp_number: input.value.trim()
+          }))
+          .filter(admin => admin.whatsapp_number && /^62\d{8,13}$/.test(admin.whatsapp_number));
+        
+        if (admins.length < 1) {
+          showToast("Minimal 1 nomor WhatsApp valid diperlukan (diawali 62, 10-15 digit)", "danger");
+          return;
+        }
+        
+        console.log('Data dikirim:', JSON.stringify({ admins }));
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Menyimpan...';
+        
+        fetch("/api/admin-number", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ admins })
+        })
+          .then((res) => {
+            if (!res.ok) {
+              return res.json().then(data => {
+                throw new Error(data.error || `HTTP error ${res.status}`);
+              });
+            }
+            return res.json();
+          })
+          .then((data) => {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '<i class="bi bi-save me-2"></i>Simpan';
+            if (data.success) {
+              showToast("Pengaturan admin berhasil disimpan!", "success");
+              loadAdminSettings();
+            }
+          })
+          .catch((err) => {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '<i class="bi bi-save me-2"></i>Simpan';
+            showToast(`Error: ${err.message}`, "danger");
+          });
+      });
+
+      // Load templates and admin settings when page loads
+      document.addEventListener('DOMContentLoaded', function() {
+        loadTemplates();
+        loadAdminSettings();
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Toko Lena Kerudung</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <h2>Lena Kerudung</h2>
+        </div>
+        <div class="sidebar-menu">
+          <a href="#qr-section" class="sidebar-item active">
+            <i class="bi bi-qr-code"></i>
+            <span>WhatsApp</span>
+          </a>
+          <a href="#items-section" class="sidebar-item">
+            <i class="bi bi-box-seam"></i>
+            <span>Produk</span>
+          </a>
+          <a href="#users-section" class="sidebar-item">
+            <i class="bi bi-people"></i>
+            <span>Pelanggan</span>
+          </a>
+          <a href="#location-section" class="sidebar-item">
+            <i class="bi bi-geo-alt"></i>
+            <span>Lokasi</span>
+          </a>
+          <a href="#invoice-section" class="sidebar-item">
+            <i class="bi bi-receipt"></i>
+            <span>Invoice</span>
+          </a>
+          <a href="/templates" class="sidebar-item">
+            <i class="bi bi-chat-text"></i>
+            <span>Template</span>
+          </a>
+          <!-- <a href="#" class="sidebar-item" id="tutorialBtn">
+            <i class="bi bi-question-circle"></i>
+            <span>Tutorial</span>
+          </a> -->
+          <a href="/logout" class="sidebar-item logout">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Logout</span>
+          </a>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <header class="top-header">
+          <div>Kelola semua data anda disini</div>
+          <div class="header-right">
+            <div class="profile dropdown">
+              <div
+                class="profile-toggle"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <span>Admin</span>
+                <i class="bi bi-chevron-down"></i>
+              </div>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                  <a class="dropdown-item" href="/logout"
+                    ><i class="bi bi-box-arrow-right"></i> Logout</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+        </header>
+
+        <div class="content-container">
+          <!-- Statistics Overview -->
+          <section class="statistics-overview mb-4">
+            <div class="row">
+              <div class="col-md-3">
+                <div class="stat-card">
+                  <div class="stat-icon bg-primary-soft">
+                    <i class="bi bi-chat-left-text"></i>
+                  </div>
+                  <div class="stat-details">
+                    <h3 id="incoming-messages">0</h3>
+                    <p>Pesan Masuk</p>
+                  </div>
+                  <div class="stat-arrow">
+                    <i class="bi bi-arrow-up-right"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="stat-card">
+                  <div class="stat-icon bg-success-soft">
+                    <i class="bi bi-people"></i>
+                  </div>
+                  <div class="stat-details">
+                    <h3 id="total-users">0</h3>
+                    <p>Pelanggan</p>
+                  </div>
+                  <div class="stat-arrow">
+                    <i class="bi bi-arrow-up-right"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="stat-card">
+                  <div class="stat-icon bg-info-soft">
+                    <i class="bi bi-box-seam"></i>
+                  </div>
+                  <div class="stat-details">
+                    <h3 id="total-products">0</h3>
+                    <p>Produk</p>
+                  </div>
+                  <div class="stat-arrow">
+                    <i class="bi bi-arrow-up-right"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="stat-card">
+                  <div class="stat-icon bg-warning-soft">
+                    <i class="bi bi-cart-check"></i>
+                  </div>
+                  <div class="stat-details">
+                    <h3 id="total-transactions">0</h3>
+                    <p>Transaksi</p>
+                  </div>
+                  <div class="stat-arrow">
+                    <i class="bi bi-arrow-up-right"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- QR Code Section -->
+          <section id="qr-section" class="content-section">
+            <div class="section-header">
+              <h2>WhatsApp QR Connect</h2>
+              <p>Hubungkan WhatsApp bot ke sistem</p>
+              <div class="alert alert-warning py-1 small mt-2" role="alert">
+                Lakukan logout via WhatsApp, jika ingin memulai kembali QR
+              </div>
+            </div>
+            <div class="card">
+              <div class="row align-items-center">
+                <div class="col-md-6 text-center">
+                  <div class="qr-container">
+                    <div id="qr-code"></div>
+                    <p id="status" class="status-text">Menunggu QR...</p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="chart-container">
+                    <h5>Pesan Masuk Mingguan</h5>
+                    <canvas id="weeklyMessageChart" height="200"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Transaction Statistics Section -->
+          <section class="content-section">
+            <div class="section-header">
+              <h2>Statistik Transaksi</h2>
+              <p>Perkembangan transaksi minggu ini</p>
+            </div>
+            <div class="card">
+              <div class="chart-container">
+                <canvas id="weeklyTransactionChart" height="150"></canvas>
+              </div>
+            </div>
+          </section>
+
+          <!-- Product Management Section -->
+<section id="items-section" class="content-section">
+  <div class="section-header">
+    <h2>Manajemen Produk</h2>
+    <p>Kelola produk, tambah, ubah, atau hapus</p>
+    <button
+      class="btn btn-primary add-item-btn"
+      data-bs-toggle="collapse"
+      data-bs-target="#item-form-container"
+    >
+      <i class="bi bi-plus-circle"></i>
+      <span id="form-action-text">Tambah Produk</span>
+    </button>
+  </div>
+
+  <div id="item-form-container" class="collapse mb-4">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="form-title mb-3" id="form-title">
+          Tambah Produk Baru
+        </h5>
+        <form id="item-form" class="row g-3">
+          <input type="hidden" name="id" id="item-id" />
+          <div class="col-md-6">
+            <label for="nama" class="form-label">Nama Produk</label>
+            <input
+              type="text"
+              name="nama"
+              id="nama"
+              class="form-control"
+              required
+            />
+          </div>
+          <div class="col-md-3">
+            <label for="harga" class="form-label">Harga</label>
+            <input
+              type="number"
+              name="harga"
+              id="harga"
+              class="form-control"
+              required
+            />
+          </div>
+          <div class="col-md-3">
+            <label for="stok" class="form-label">Stok</label>
+            <input
+              type="number"
+              name="stok"
+              id="stok"
+              class="form-control"
+              required
+            />
+          </div>
+          <div class="col-md-12">
+            <label for="deskripsi" class="form-label"
+              >Deskripsi</label
+            >
+            <textarea
+              name="deskripsi"
+              id="deskripsi"
+              class="form-control"
+              rows="3"
+            ></textarea>
+          </div>
+          <div class="col-md-12">
+            <label for="gambar-input" class="form-label"
+              >Gambar Produk</label
+            >
+            <input
+              type="file"
+              name="gambar"
+              id="gambar-input"
+              class="form-control"
+              accept="image/*"
+              required
+            />
+          </div>
+          <div class="col-12 d-flex justify-content-end gap-2">
+            <button
+              type="button"
+              id="cancel-btn"
+              class="btn btn-outline-secondary"
+              data-bs-toggle="collapse"
+              data-bs-target="#item-form-container"
+            >
+              Batal
+            </button>
+            <button
+              type="submit"
+              id="submit-btn"
+              class="btn btn-primary"
+            >
+              Tambah
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Gambar</th>
+            <th>Nama</th>
+            <th>Harga</th>
+            <th>Stok</th>
+            <th>Deskripsi</th>
+            <th class="text-center">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="items-table"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+          <!-- Users Section -->
+          <section id="users-section" class="content-section">
+            <div class="section-header">
+              <h2>Daftar Pelanggan</h2>
+              <p>Kelola dan pantau pelanggan</p>
+            </div>
+            <div class="card">
+              <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                  <thead>
+                    <tr>
+                      <th>No. WA</th>
+                      <th>Nama</th>
+                      <th>Total Chat</th>
+                      <th>Jumlah Transaksi</th>
+                      <th>Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody id="users-table"></tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- Location Section -->
+          <section id="location-section" class="content-section">
+            <div class="section-header">
+              <h2>Lokasi Toko</h2>
+              <p>Atur lokasi toko untuk ditampilkan ke pelanggan</p>
+            </div>
+            <div class="card">
+              <div class="card-body">
+                <form id="location-form" class="row g-3">
+                  <div class="col-md-6">
+                    <label for="name" class="form-label">Nama Lokasi</label>
+                    <input
+                      type="text"
+                      name="name"
+                      id="name"
+                      class="form-control"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-3">
+                    <label for="latitude" class="form-label">Latitude</label>
+                    <input
+                      type="number"
+                      step="any"
+                      name="latitude"
+                      id="latitude"
+                      class="form-control"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-3">
+                    <label for="longitude" class="form-label">Longitude</label>
+                    <input
+                      type="number"
+                      step="any"
+                      name="longitude"
+                      id="longitude"
+                      class="form-control"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-12">
+                    <label for="address" class="form-label"
+                      >Alamat Lengkap</label
+                    >
+                    <textarea
+                      name="address"
+                      id="address"
+                      class="form-control"
+                      rows="3"
+                      required
+                    ></textarea>
+                  </div>
+                  <div class="col-12 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">
+                      Simpan Lokasi
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </section>
+
+          <!-- Invoice Section -->
+          <section id="invoice-section" class="content-section">
+            <div class="section-header">
+              <h2>Daftar Invoice</h2>
+              <p>Kelola dan cetak invoice transaksi</p>
+              <button id="print-excel-btn" class="btn btn-success mb-2 mt-2">
+                <i class="bi bi-file-earmark-excel"></i> Print Excel
+              </button>
+            </div>
+            <div class="card">
+              <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                  <thead>
+                    <tr>
+                      <th>ID Invoice</th>
+                      <th>Tanggal</th>
+                      <th>Pelanggan</th>
+                      <th>Produk</th>
+                      <th>Jumlah</th>
+                      <th>Harga</th>
+                      <th>Total</th>
+                      <th>Status</th>
+                      <th class="text-center">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody id="invoice-table">
+                    <!-- Data invoice akan diisi via JS -->
+                  </tbody>
+                </table>
+              </div>
+              <div class="pagination-container">
+                <nav aria-label="Invoice pagination">
+                  <ul class="pagination justify-content-center mt-3">
+                    <li class="page-item" id="prev-invoice">
+                      <a class="page-link" href="javascript:void(0)"><i class="bi bi-chevron-left"></i></a>
+                    </li>
+                    <li class="page-item disabled" id="invoice-page-info">
+                      <span class="page-link">Halaman 1 dari 1</span>
+                    </li>
+                    <li class="page-item" id="next-invoice">
+                      <a class="page-link" href="javascript:void(0)"><i class="bi bi-chevron-right"></i></a>
+                    </li>
+                  </ul>
+                </nav>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <!-- Transaction Modal -->
+    <div
+      class="modal fade"
+      id="transactionModal"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Detail Transaksi</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="table-responsive">
+              <table class="table table-hover align-middle">
+                <thead>
+                  <tr>
+                    <th>ID Pesanan</th>
+                    <th>Produk</th>
+                    <th>Jumlah</th>
+                    <th>Total Harga</th>
+                    <th>Tanggal</th>
+                  </tr>
+                </thead>
+                <tbody id="transaction-details"></tbody>
+              </table>
+            </div>
+            <nav aria-label="Transaction pagination">
+              <ul class="pagination justify-content-center mt-3">
+                <li class="page-item" id="prev-transaction">
+                  <a class="page-link" href="javascript:void(0)"
+                    ><i class="bi bi-chevron-left"></i
+                  ></a>
+                </li>
+                <li class="page-item disabled" id="transaction-page-info">
+                  <span class="page-link">Halaman 1</span>
+                </li>
+                <li class="page-item" id="next-transaction">
+                  <a class="page-link" href="javascript:void(0)"
+                    ><i class="bi bi-chevron-right"></i
+                  ></a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Password Modal -->
+    <div class="modal fade" id="passwordModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Masukkan Password</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="password-form">
+              <div class="mb-3">
+                <label for="reveal-password" class="form-label"
+                  >Password Admin</label
+                >
+                <input
+                  type="password"
+                  class="form-control"
+                  id="reveal-password"
+                  name="password"
+                  required
+                />
+              </div>
+              <p
+                id="password-error"
+                class="text-danger mt-2"
+                style="display: none"
+              ></p>
+              <button type="submit" class="btn btn-primary w-100">
+                Verifikasi
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Promotion Modal -->
+    <div
+      class="modal fade"
+      id="promotionModal"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Promosikan Produk</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="product-details d-flex align-items-center mb-3">
+              <img
+                id="promo-product-img"
+                src=""
+                alt="Product Image"
+                class="rounded me-3"
+                style="width: 60px; height: 60px; object-fit: cover"
+              />
+              <div>
+                <h6 id="promo-product-name" class="mb-1"></h6>
+                <p id="promo-product-price" class="mb-0 text-muted"></p>
+              </div>
+            </div>
+            <div class="description mb-3">
+              <label class="form-label">Deskripsi Produk</label>
+              <p id="promo-product-desc" class="text-muted"></p>
+            </div>
+            <div class="preview-message">
+              <label class="form-label">Pratinjau Pesan Promosi</label>
+              <div class="card bg-light p-3">
+                <p id="promo-message-preview" class="mb-0"></p>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              data-bs-dismiss="modal"
+            >
+              Batal
+            </button>
+            <button
+              type="button"
+              id="confirm-promo-btn"
+              class="btn btn-primary"
+            >
+              <span id="promo-btn-text">Kirim Promosi</span>
+              <span
+                id="promo-loading"
+                class="spinner-border spinner-border-sm d-none"
+                role="status"
+              ></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Konfirmasi Penghapusan</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="d-flex align-items-center mb-3">
+              <i
+                class="bi bi-exclamation-triangle-fill text-danger me-3"
+                style="font-size: 2rem"
+              ></i>
+              <div>
+                <p class="mb-1">
+                  Apakah Anda yakin ingin menghapus produk
+                  <strong id="delete-product-name"></strong>?
+                </p>
+                <p class="text-muted mb-0">
+                  Tindakan ini tidak dapat dibatalkan.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              data-bs-dismiss="modal"
+            >
+              Batal
+            </button>
+            <button
+              type="button"
+              id="confirm-delete-btn"
+              class="btn btn-danger"
+            >
+              <span id="delete-btn-text">Hapus</span>
+              <span
+                id="delete-loading"
+                class="spinner-border spinner-border-sm d-none"
+                role="status"
+              ></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Back to top button -->
+    <button id="scrollTopBtn" class="back-to-top">
+      <i class="bi bi-arrow-up"></i>
+    </button>
+
+    <!-- Tutorial Menu -->
+    <div class="tutorial-menu">
+      <div class="tutorial-content">
+        <h4>Tutorial Penggunaan</h4>
+        <ul>
+          <li>
+            <i class="bi bi-check-circle"></i> Klik tombol WhatsApp untuk
+            memulai bot
+          </li>
+          <li><i class="bi bi-check-circle"></i> Scan QR code yang muncul</li>
+          <li>
+            <i class="bi bi-check-circle"></i> Kelola produk di menu Produk
+          </li>
+          <li>
+            <i class="bi bi-check-circle"></i> Pantau pelanggan di menu
+            Pelanggan
+          </li>
+          <li>
+            <i class="bi bi-check-circle"></i> Atur lokasi toko di menu Lokasi
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Print Resi -->
+    <div id="receipt-template" style="display: none;"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script type="module" src="/js/main.js"></script>
+    <script>
+      // Fix untuk scroll yang lebih presisi
+      document.querySelectorAll(".sidebar-item").forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          if (this.getAttribute("href").startsWith("#")) {
+            e.preventDefault();
+            const targetId = this.getAttribute("href");
+            const targetElement = document.querySelector(targetId);
+
+            if (targetElement) {
+              // Mendapatkan tinggi header
+              const headerHeight =
+                document.querySelector(".top-header").offsetHeight;
+              // Menghitung posisi scroll yang tepat dengan offset
+              const elementPosition = targetElement.getBoundingClientRect().top;
+              const offsetPosition =
+                elementPosition + window.pageYOffset - headerHeight - 20; // 20px buffer tambahan
+
+              // Scroll ke posisi target dengan animasi
+              window.scrollTo({
+                top: offsetPosition,
+                behavior: "smooth",
+              });
+
+              // Tambahan: mengupdate kelas aktif di sidebar
+              document.querySelectorAll(".sidebar-item").forEach((item) => {
+                item.classList.remove("active");
+              });
+              this.classList.add("active");
+            }
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
